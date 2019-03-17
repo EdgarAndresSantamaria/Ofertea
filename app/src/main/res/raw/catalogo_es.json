@@ -1,0 +1,27 @@
+[  
+   {  
+      "compañia":"Carrefour",
+      "oferta":"3x2",
+      "descripcion":"3x2 en todos los productos de carniceria"
+   },
+   {  
+      "compañia":"PcActual",
+      "oferta":"10% descuento",
+      "descripcion":"descuento del 10% en periféricos"
+   },
+   {  
+      "compañia":"Amazon",
+      "oferta":"50% descuento",
+      "descripcion":"todas nuestras zapatillas a mitad de precio"
+   },
+   {  
+      "compañia":"Felizonia",
+      "oferta":"100%",
+      "descripcion":"te pagamos por nuestros productos"
+   },
+   {  
+      "compañia":"BBK",
+      "oferta":"robo",
+      "descripcion":"te robamos todo lo que nos permitas pero tendrás un trofeo honorífico"
+   }
+]

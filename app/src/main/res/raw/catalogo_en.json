@@ -1,0 +1,27 @@
+[  
+   {  
+      "compañia":"Carrefour",
+      "oferta":"3x2",
+      "descripcion":"3x2 in whole meat products"
+   },
+   {  
+      "compañia":"PcActual",
+      "oferta":"10% discount",
+      "descripcion":"discount of 10% in periferials"
+   },
+   {  
+      "compañia":"Amazon",
+      "oferta":"50% discount",
+      "descripcion":"our shoes on half price"
+   },
+   {  
+      "compañia":"Felizonia",
+      "oferta":"100%",
+      "descripcion":"we pay you each product"
+   },
+   {  
+      "compañia":"BBK",
+      "oferta":"robbery",
+      "descripcion":"we rob you all the money in exchange you earn a prize"
+   }
+]
