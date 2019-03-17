@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -81,6 +82,14 @@ public class MainActivity extends AppCompatActivity
                         finish();
                     }
                 });
+                // if want to know about me
+                builder.setNeutralButton("¿quién soy?",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // show my CV
+                        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EdgarAndresSantamaria/CV")); startActivity(i);
+                    }
+                });
             }else{
                 // if spanish
                 // configure terns alert in spanish
@@ -98,6 +107,14 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
                         //shutdown
                         finish();
+                    }
+                });
+                // if want to know about me
+                builder.setNeutralButton("who am i?",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // show my CV
+                        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EdgarAndresSantamaria/CV")); startActivity(i);
                     }
                 });
             }
