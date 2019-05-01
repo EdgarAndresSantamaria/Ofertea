@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -24,6 +25,15 @@ import android.content.Intent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONObject;
+
+import java.io.PrintWriter;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity
@@ -63,62 +73,32 @@ public class MainActivity extends AppCompatActivity
             // if terns not yet agreed
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             // generate an alert
-            if(!language){
-                // if english
-                // configure terns alert in english
-                builder.setTitle("Términos de uso");
-                builder.setMessage("Aceptar los términos de la App (foolink)?");
-                builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            // configure terns alert
+            builder.setTitle(getString(R.string.ternsTit));
+            builder.setMessage(getString(R.string.ternsDesc));
+            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         agreeTerns();
                     }
                 });
-                // if negative to terns
-                builder.setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
+            // if negative to terns
+            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // shutdown
                         finish();
                     }
                 });
-                // if want to know about me
-                builder.setNeutralButton("¿quién soy?",new DialogInterface.OnClickListener() {
+            // if want to know about me
+            builder.setNeutralButton(getString(R.string.neutral),new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // show my CV
                         Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EdgarAndresSantamaria/CV")); startActivity(i);
                     }
                 });
-            }else{
-                // if spanish
-                // configure terns alert in spanish
-                builder.setTitle("Terms of use");
-                builder.setMessage("Accept App terms(foolink)?");
-                builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        agreeTerns();
-                    }
-                });
-                // if negative to terns
-                builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //shutdown
-                        finish();
-                    }
-                });
-                // if want to know about me
-                builder.setNeutralButton("who am i?",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // show my CV
-                        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EdgarAndresSantamaria/CV")); startActivity(i);
-                    }
-                });
-            }
-            //
+
             AlertDialog eldialogo = builder.create();
             eldialogo.show();
         }
@@ -130,17 +110,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              if(language){
-                  // if english
-                  Snackbar.make(view, "Login / Register", Snackbar.LENGTH_LONG);
-                  showBasicMsg("This function manages the login or register on the app, " +
-                          "only registered users ll get notified of favourite products");
-              }else{
-                  // if spanish
-                  Snackbar.make(view, "Entrar / Registrarse", Snackbar.LENGTH_LONG);
-                  showBasicMsg("Esta función te permitirá registrarte o entrar en la App, " +
-                          "los usuarios registrados recibirán notificaciones de productos relacionados");
-              }
+                Snackbar.make(view, getString(R.string.lTit), Snackbar.LENGTH_LONG);
+                showBasicMsg(getString(R.string.lMess));
             }
         });
         // configure the explanation for Selected products button
@@ -148,17 +119,8 @@ public class MainActivity extends AppCompatActivity
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (language) {
-                    // if english
-                    Snackbar.make(view, "Selected products", Snackbar.LENGTH_LONG);
-                    showBasicMsg("This function allows to see selected offers " +
-                            "and finalize the purchase");
-                } else {
-                    // if spanish
-                    Snackbar.make(view, "ver carro de compra", Snackbar.LENGTH_LONG);
-                    showBasicMsg("Esta función permite ver las ofertas que has seleccionado para " +
-                            "proceder a su adquisición");
-                }
+                Snackbar.make(view, getString(R.string.pTit), Snackbar.LENGTH_LONG);
+                showBasicMsg(getString(R.string.pMess));
             }
         });
         // configure the explanation for Contact information button
@@ -166,17 +128,8 @@ public class MainActivity extends AppCompatActivity
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (language) {
-                    // if english
-                    Snackbar.make(view, "Contact information", Snackbar.LENGTH_LONG);
-                    showBasicMsg("This function sllows to see all the information about the App");
-
-                } else {
-                    // if spanish
-                    Snackbar.make(view, "ver información", Snackbar.LENGTH_LONG);
-                    showBasicMsg("Esta función te permitirá ver la información de contacto de esta App");
-
-                }
+                Snackbar.make(view, getString(R.string.cTit), Snackbar.LENGTH_LONG);
+                showBasicMsg(getString(R.string.cMess));
             }
         });
         // configure the explanation for Products button
@@ -184,16 +137,8 @@ public class MainActivity extends AppCompatActivity
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (language) {
-                    // if english
-                    Snackbar.make(view, "Products", Snackbar.LENGTH_LONG);
-                    showBasicMsg("This function shows all avaliable offers in the App");
-
-                } else {
-                    // if spanish
-                    Snackbar.make(view, "ver catálogo", Snackbar.LENGTH_LONG);
-                    showBasicMsg("Esta función te permite visualizar todas las ofertas del sistema");
-                }
+                Snackbar.make(view, getString(R.string.prTit), Snackbar.LENGTH_LONG);
+                showBasicMsg(getString(R.string.prMess));
             }
         });
         // configure the explanation for Preferences button
@@ -201,16 +146,8 @@ public class MainActivity extends AppCompatActivity
         fab4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (language) {
-                    // if english
-                    Snackbar.make(view, "Preferences", Snackbar.LENGTH_LONG);
-                    showBasicMsg("This function allows the App configuration");
-
-                } else {
-                    // if spanish
-                    Snackbar.make(view, "ver preferencias", Snackbar.LENGTH_LONG);
-                    showBasicMsg("Esta función te permitirá configurar la App");
-                }
+                Snackbar.make(view, getString(R.string.prefTit), Snackbar.LENGTH_LONG);
+                showBasicMsg(getString(R.string.prefMess));
             }
         });
         // set up the personalized bar actions into layout
@@ -225,7 +162,7 @@ public class MainActivity extends AppCompatActivity
         // get menu item object
         Menu nav_Menu = navigationView.getMenu();
         // hide unused items
-        nav_Menu.findItem(R.id.contacto).setVisible(false);
+        nav_Menu.findItem(R.id.fotos).setVisible(false);
         nav_Menu.findItem(R.id.carrito).setVisible(false);
         nav_Menu.findItem(R.id.salir).setVisible(false);
         // retrieve log information
@@ -236,13 +173,7 @@ public class MainActivity extends AppCompatActivity
             nav_Menu.findItem(R.id.salir).setVisible(true);
             // initialize welcome greetings
             TextView welcome = (TextView) findViewById(R.id.textView3);
-            if(language){
-                // if english
-                welcome.setText("Welcome " + user + " !");
-            }else {
-                // if spanish
-                welcome.setText("bienvenido " + user + " !");
-            }
+            welcome.setText(getString(R.string.wellcome) + user + " !");
         }
 
         if(style){
@@ -275,7 +206,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method updates the status of tern agreement
+     * This method updates the status of tern agreement and enables FCM
      */
     public void agreeTerns(){
         // retrieve preferences
@@ -285,25 +216,12 @@ public class MainActivity extends AppCompatActivity
         // edit terns status
         editor.putBoolean("terns", true);
         editor.commit();
+        FirebaseApp.initializeApp(this);
         // let the user personalize the app before starting
         startPreferences();
     }
 
-    /**
-     * TODO in development
-     */
-    public void startSelectedProducts(){
-        //Intent i = new Intent(this , LoginActivity.class);
-        //startActivity(i);
-    }
 
-    /**
-     * TODO in development
-     */
-    public void startInfo(){
-        //Intent i = new Intent(this , LoginActivity.class);
-        //startActivity(i);
-    }
 
     /**
      * This method displays preferences GUI
@@ -318,7 +236,6 @@ public class MainActivity extends AppCompatActivity
      * This method updates login status in the App
      */
     public void closeSession(){
-        //TODO parametrize main activity launch
         // get shared info
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor= prefs.edit();
@@ -326,6 +243,27 @@ public class MainActivity extends AppCompatActivity
         editor.putBoolean("terns", false);
         editor.putString("user","invitado");
         editor.commit();
+        // close remote session
+        HttpsURLConnection urlConnection= com.example.proyecto_1.GeneradorConexionesSeguras.getInstance().crearConexionSegura(getApplicationContext(),"https://134.209.235.115/eandres011/WEB/gestorUsuarios.php");
+        try {
+            // set request parameters
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            JSONObject parametrosJSON = new JSONObject();
+            parametrosJSON.put("register", false);
+            // write JSON parameters
+            PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+            out.print(parametrosJSON.toString());
+            out.close();
+            if (urlConnection.getResponseCode() == 200){
+                // launch request
+            }
+            // catch any exception
+        }catch(Exception e){
+
+        }
+
         //launch main activity
         Intent i = new Intent(this , MainActivity.class);
         startActivity(i);
@@ -350,16 +288,13 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        //TODO parametrize main activity launch
         // manage to cclose nav menu if was opened
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             // if was in main activity
-            // re-launch main activity
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+            // exit ofertea
             finish();
         }
     }
@@ -396,10 +331,10 @@ public class MainActivity extends AppCompatActivity
         // switch menu cases
         if (id == R.id.catalogo) {
             startProducts();
-        } else if (id == R.id.contacto) {
-            startInfo();
+        } else if (id == R.id.fotos) {
+            //nothing
         }  else if (id == R.id.carrito) {
-            startSelectedProducts();
+            //nothing
         }  else if (id == R.id.perfil) {
             startLogin();
         }  else if (id == R.id.preferencias) {

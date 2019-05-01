@@ -1,25 +1,42 @@
 package com.example.proyecto_1;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.example.proyecto_1.dummy.DummyContent;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import javax.net.ssl.HttpsURLConnection;
+
 
 /**
  * An activity representing a list of Items. This activity
@@ -32,12 +49,15 @@ import java.util.List;
 public class ItemListActivity extends AppCompatActivity {
 
     /**
+     * Keep track of the messaging task to ensure we can cancel it if requested.
+     */
+    private UserMessageTask mMessageTask = null;
+    /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device, land mode ...
      */
     // intern management flags
     private boolean mTwoPane;
-    private boolean language;
     // favourite button to maintain consistency
     private  FloatingActionButton fab8;
 
@@ -47,7 +67,6 @@ public class ItemListActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO parametrize the button fab8
         super.onCreate(savedInstanceState);
         // retrieve style preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -72,49 +91,54 @@ public class ItemListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
         // configure return button
-        FloatingActionButton fab10 = (FloatingActionButton) findViewById(R.id.fab10);
+        FloatingActionButton fab10 = findViewById(R.id.fab10);
         fab10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchMain();
             }
         });
-        // retrieve language and user status
-        language =  prefs.getBoolean("ingles",false);
-        String user =  prefs.getString("user","invitado");
-        if(!user.equals("invitado")){
-            // if not loged
-            fab8 = (FloatingActionButton) findViewById(R.id.fab8);
-            // configure behaviur of favourite button
-            fab8.setOnClickListener(new View.OnClickListener() {
+
+        // get favourite button
+        fab8 =  findViewById(R.id.fab8);
+        // configure behaviur of favourite button
+        fab8.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(language){
-                        // if english
-                        lanzarNotificacion("You added an article to favourites.", "we ll take care about it for future search");
-                    }else {
-                        // if spanish
-                        lanzarNotificacion("Has añadido un articulo a favoritos.", "tendremos en cuenta esta información para posteriores búsquedas");
-                    }
-                }
-            });
-        }else{
-            // if  loged
-            fab8 = (FloatingActionButton) findViewById(R.id.fab8);
-            // configure behaviur of favourite button
-            fab8.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(language){
-                        // if english
-                        lanzarNotificacion("only avaliable for registered users", "go to login / register section on menu");
-                    }else {
-                        // ifspanish
-                        lanzarNotificacion("solo disponible para usuarios registrados", "ve al menú y registrate");
-                    }
-                }
-            });
-        }
+                    // realizar peticion a servicio FCM
+                    // pedir token
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.w("token", "getInstanceId failed", task.getException());
+                                        return;
+                                    }
+
+                                    // Get new Instance ID token
+                                    String token = task.getResult().getToken();
+                                    // Show a progress spinner, and kick off a background task to
+                                    // perform the user login attempt.
+                                    mMessageTask = new UserMessageTask(token,getApplicationContext());
+                                    mMessageTask.execute((Void) null);
+                                    int mCod = mMessageTask.getmCod();
+                                    // check result
+                                    if(mCod == -1){
+                                        showBasicMsg(getString(R.string.success));
+                                    }else if(mCod == 0){
+                                        showBasicMsg(getString(R.string.error_incorrect_password));
+                                    }else if(mCod == 1){
+                                        showBasicMsg(getString(R.string.error_inexistent_user));
+                                    }else if(mCod == 2){
+                                        showBasicMsg(getString(R.string.error_bad_login_register));
+                                    }else if(mCod == 3){
+                                        showBasicMsg(getString(R.string.error_incorrect_call));
+                                    }else if(mCod == 4) {
+                                        showBasicMsg(getString(R.string.error_server_error));
+                                    }
+                                }});
+                }});
         fab8.hide();
         // construct the recycler view
         View recyclerView = findViewById(R.id.item_list);
@@ -141,29 +165,19 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     /**
-     * This method launches a notification
-     * @param text
-     * @param subText
+     * This method displays a short message in top of the App
+     * @param mensaje
      */
-    public void lanzarNotificacion(String text,String subText){
-        // get Notification management object
-        NotificationManager mnager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // retrieve the notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "IdCanal");
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
-            // creates the notification channel
-            NotificationChannel elCanal = new NotificationChannel("IdCanal", "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
-            // configure notification
-            builder.setSmallIcon(android.R.drawable.stat_sys_warning)
-                    .setContentTitle("info")
-                    .setContentText(text)
-                    .setSubText(subText)
-                    .setVibrate(new long[]{0, 1000, 500, 1000}).setAutoCancel(true);
-            // display notification in the phone
-            mnager.createNotificationChannel(elCanal);
-            mnager.notify(1, builder.build());
-        }
+    private void showBasicMsg(String mensaje){
+        // generate toast
+        int tiempo= Toast.LENGTH_SHORT;
+        Toast aviso = Toast.makeText(this, mensaje, tiempo);
+        // show in upper bound centered
+        aviso.setGravity(Gravity.TOP| Gravity.CENTER, 0, 0);
+        aviso.show();
     }
+
+
 
     /**
      * This method sets up the recycler view
@@ -172,6 +186,7 @@ public class ItemListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
     }
+
 
     /**
      * This inner class manages the behaviour of the list fragment
@@ -276,8 +291,8 @@ public class ItemListActivity extends AppCompatActivity {
              */
             public ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = view.findViewById(R.id.id_text);
+                mContentView =  view.findViewById(R.id.content);
             }
         }
     }

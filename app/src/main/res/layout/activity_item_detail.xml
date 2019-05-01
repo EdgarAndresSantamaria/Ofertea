@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_coord"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -27,6 +28,16 @@
         app:layout_anchor="@+id/item_detail_container"
         app:layout_anchorGravity="left"
         app:srcCompat="@drawable/ic_arrow_back_black" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|start"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@+id/item_detail_container"
+        app:layout_anchorGravity="left|center"
+        app:srcCompat="@drawable/ic_photo_camera_black" />
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

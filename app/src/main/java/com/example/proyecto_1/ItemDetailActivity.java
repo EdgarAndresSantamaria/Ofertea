@@ -1,20 +1,44 @@
 package com.example.proyecto_1;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Base64;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.Date;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -24,8 +48,13 @@ import android.view.View;
  */
 public class ItemDetailActivity extends AppCompatActivity {
 
-    // intern lenguage preferences flag
-    private Boolean language;
+    /**
+     * Keep track of the messaging task to ensure we can cancel it if requested.
+     */
+    private UserMessageTask mMessageTask = null;
+    private ImageUploadTask mImageTask = null;
+    private String elToken;
+
 
     /**
      * This method creates the GUI for item details and ensemble the action logic
@@ -40,48 +69,76 @@ public class ItemDetailActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         // retrieve style status
         Boolean style =  prefs.getBoolean("estilo",false);
-        language =  prefs.getBoolean("ingles",false);
+
+        // recoger elementos remotos
+        ImageDownloadTask mImageDlTask = new ImageDownloadTask(getApplicationContext());
+        mImageDlTask.execute((Void) null);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        elToken = task.getResult().getToken();
+                    }
+                });
 
         if(style){
             AppBarLayout bar = (AppBarLayout) findViewById(R.id.app_bar);
             bar.setBackgroundColor(Color.parseColor("#FF33b5e5"));
         }
 
-        // retrieve user login status
-        String user =  prefs.getString("user","invitado");
-        if(!user.equals("invitado")){
-            //user loged
-            // set the action to fab5 icon (favourite)
-            FloatingActionButton fab5 = (FloatingActionButton) findViewById(R.id.fab5);
-            fab5.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(language){
-                        // english version
-                        showNotification("You added an article to favourites.", "we ll take care about it for future search");
-                    }else {
-                        // spanish version
-                        showNotification("Has añadido un articulo a favoritos.", "tendremos en cuenta esta información para posteriores búsquedas");
-                    }
-                }
-            });
-        }else{
-            // user not loged
-            // set the action to fab5 icon (favourite)
-            FloatingActionButton fab5 = (FloatingActionButton) findViewById(R.id.fab5);
-            fab5.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(language){
-                        // english version
-                        showNotification("only avaliable for registered users", "go to login / register section on menu");
-                    }else {
-                        // spanish version
-                        showNotification("solo disponible para usuarios registrados", "ve al menú y registrate");
-                    }
-               }
-            });
-        }
+        // get camera button
+        FloatingActionButton fab12 =  findViewById(R.id.fab12);
+        // configure behaviur of camera button
+        fab12.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent elIntentGal = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(elIntentGal, 100);
+            }
+        });
+
+        // set the action to fab5 icon (favourite)
+        FloatingActionButton fab5 = (FloatingActionButton) findViewById(R.id.fab5);
+        fab5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // realizar peticion a servicio FCM
+                // pedir token
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w("token", "getInstanceId failed", task.getException());
+                                    return;
+                                }
+
+                                // Get new Instance ID token
+                                String token = task.getResult().getToken();
+                                // Show a progress spinner, and kick off a background task to
+                                // perform the user login attempt.
+                                mMessageTask = new UserMessageTask(token,getApplicationContext());
+                                mMessageTask.execute((Void) null);
+                                int mCod = mMessageTask.getmCod();
+                                // check result
+                                if(mCod == -1){
+                                    showBasicMsg(getString(R.string.success));
+                                }else if(mCod == 0){
+                                    showBasicMsg(getString(R.string.error_incorrect_password));
+                                }else if(mCod == 1){
+                                    showBasicMsg(getString(R.string.error_inexistent_user));
+                                }else if(mCod == 2){
+                                    showBasicMsg(getString(R.string.error_bad_login_register));
+                                }else if(mCod == 3){
+                                    showBasicMsg(getString(R.string.error_incorrect_call));
+                                }else if(mCod == 4) {
+                                    showBasicMsg(getString(R.string.error_server_error));
+                                }
+
+                            }});
+            }});
+
 
         // set the action to fab6 icon (backward)
         FloatingActionButton fab6 = (FloatingActionButton) findViewById(R.id.fab6);
@@ -97,6 +154,21 @@ public class ItemDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        // esperar a la carga asincrona
+        while(mImageDlTask.getmImage() == null){
+
+        }
+        Bitmap elBitmap = mImageDlTask.getmImage();
+        CoordinatorLayout layout = findViewById(R.id.layout_coord);
+        //ImageView Setup
+        ImageView imageView = new ImageView(this);
+        //setting image resource
+        imageView.setImageBitmap(elBitmap);
+        //setting image position
+        imageView.setLayoutParams(new AppBarLayout.LayoutParams(100,
+                100));
+        layout.addView(imageView);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -121,6 +193,42 @@ public class ItemDetailActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            try {
+                Uri imagenSeleccionada = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imagenSeleccionada);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] fototransformada = stream.toByteArray();
+                String fotoen64 = Base64.encodeToString(fototransformada, Base64.DEFAULT);
+                Log.w("url", "imageTmp" + new Date().toString());
+                Log.w("token", elToken);
+                mImageTask = new ImageUploadTask(fotoen64, getApplicationContext(), "imageTmp" + new Date().toString(),elToken);
+                mImageTask.execute((Void) null);
+                int mCod = mImageTask.getmCod();
+                // check result
+                if(mCod == -1){
+                    showBasicMsg(getString(R.string.successUpload));
+                }else if(mCod == 0){
+                    showBasicMsg(getString(R.string.error_incorrect_password));
+                }else if(mCod == 1){
+                    showBasicMsg(getString(R.string.error_inexistent_user));
+                }else if(mCod == 2){
+                    showBasicMsg(getString(R.string.error_bad_login_register));
+                }else if(mCod == 3){
+                    showBasicMsg(getString(R.string.error_incorrect_call));
+                }else if(mCod == 4) {
+                    showBasicMsg(getString(R.string.error_server_error));
+                }
+
+            }catch(Exception e){
+                Log.w("excepcion", e.toString());
+            }
+        }
+    }
     /**
      * This method manages the function of back button
      */
@@ -141,30 +249,16 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * This method shows a notification made with a title 'text' and a description as 'subText'
-     * @param text
-     * @param subText
+     * This method displays a short message in top of the App
+     * @param mensaje
      */
-    public void showNotification(String text, String subText){
-        // retrieve Notification Manager
-        NotificationManager  manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // Start a notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "IdCanal");
-        // for API > Oreo
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
-            // build notification
-            NotificationChannel channel = new NotificationChannel("IdCanal", "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
-            // personalize notification
-            builder.setSmallIcon(android.R.drawable.stat_sys_warning)
-                    .setContentTitle("info")
-                    .setContentText(text)
-                    .setSubText(subText)
-                    .setVibrate(new long[]{0, 1000, 500, 1000}).setAutoCancel(true);
-            // create channel
-            manager.createNotificationChannel(channel);
-            // show notification
-            manager.notify(1, builder.build());
-        }
+    private void showBasicMsg(String mensaje){
+        // generate toast
+        int tiempo= Toast.LENGTH_SHORT;
+        Toast aviso = Toast.makeText(this, mensaje, tiempo);
+        // show in upper bound centered
+        aviso.setGravity(Gravity.TOP| Gravity.CENTER, 0, 0);
+        aviso.show();
     }
 
 }

@@ -7,7 +7,7 @@
     <string name="action_settings">Preferences</string>
     <string name="item0">close sesion</string>
     <string name="item1">Products</string>
-    <string name="item2">Contact</string>
+    <string name="item2">gallery</string>
     <string name="item3">Selected products</string>
     <string name="item4">Profile</string>
     <string name="item5">Preferences</string>
@@ -17,7 +17,7 @@
     <string name="action_sign_in_short">Login</string>
     <string name="error_invalid_email">invalid e-mail</string>
     <string name="error_invalid_password">password is short (8 character)</string>
-    <string name="error_incorrect_password">incorrect password </string>
+
     <string name="error_field_required">required</string>
     <string name="permission_rationale">Contact permissions needed to autocomplete e-mail</string>
     <string name="bienvenida">To start get into products and search for the best offers, click in icons below to earn more information.</string>
@@ -104,4 +104,57 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!-- Notification String -->
+    <string name="reject_text">only avaliable for registered users</string>
+    <string name="reject_subtext">go to login / register section on menu</string>
+    <string name="reject_title">Rejected</string>
+    <string name="done_subtext">we ll take care about it for future search</string>
+    <string name="done_text">You added an article to favourites.</string>
+    <string name="done_title">Done</string>
+    <string name="warn_subtext">we could not notify your favourite products</string>
+    <string name="default_notification_channel_id"> defaultFCM </string>
+    <string name="warn_text">You have desactivated Ofertea in Background.</string>
+    <string name="warn_title">Warn</string>
+
+    <!-- error String -->
+    <string name="error_incorrect_password">wrong password was set</string>
+    <string name="error_inexistent_user">this user doesnt exist</string>
+    <string name="error_bad_login_register">something went wrong in login/register try again</string>
+    <string name="error_incorrect_call">wrong https call</string>
+    <string name="error_server_error">sorry our server is out</string>
+    <string name="success">added favourite</string>
+    <string name="successUpload">your photo was added to topic it ll be shown on top</string>
+
+    <!-- use terns-->
+    <string name="ternsTit">Terms of use</string>
+    <string name="ternsDesc">Accept App terms(foolink)?</string>
+    <string name="yes">Accept</string>
+    <string name="no">Decline</string>
+    <string name="neutral">who am i?</string>
+
+    <!-- explain login / register-->
+    <string name="lTit">Login / Register</string>
+    <string name="lMess">This function manages the login or register on the app, only registered users ll get notified of favourite products</string>
+
+    <!-- explain photo-->
+    <string name="pTit">Upload photo</string>
+    <string name="pMess">This function uploads a photo related to a offer</string>
+
+    <!-- explain favourite-->
+    <string name="cTit">Favourite</string>
+    <string name="cMess">This function favourites an offer</string>
+
+    <!-- explain products-->
+    <string name="prTit">Products</string>
+    <string name="prMess">This function shows all avaliable offers in the App</string>
+
+    <!-- explain preferences-->
+    <string name="prefTit">Preferences</string>
+    <string name="prefMess">This function allows the App configuration</string>
+
+    <!-- wellcome-->
+    <string name="wellcome">Welcome</string>
+
+
 </resources>

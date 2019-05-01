@@ -7,7 +7,7 @@
     <string name="action_settings">preferencias</string>
     <string name="item0">cerrar sesión</string>
     <string name="item1">catálogo</string>
-    <string name="item2">contacto</string>
+    <string name="item2">galeria</string>
     <string name="item3">carro compra</string>
     <string name="item4">perfil</string>
     <string name="item5">preferencias</string>
@@ -17,7 +17,7 @@
     <string name="action_sign_in_short">Entrar</string>
     <string name="error_invalid_email">e-mail no válido</string>
     <string name="error_invalid_password">contraseña demasiado corta (8 caracteres)</string>
-    <string name="error_incorrect_password">contraseña incorrecta</string>
+
     <string name="error_field_required">se requiere este campo</string>
     <string name="permission_rationale">se requieren permisos de contacto para autocompletar e-mail</string>
     <string name="bienvenida">para comenzar despliega el catálogo y encuentra las mejores ofertas, pincha en cada icono para recibir más información.</string>
@@ -104,4 +104,57 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!-- Notification String -->
+    <string name="reject_text">solo disponible para usuarios registrados</string>
+    <string name="reject_subtext">ve al menú y registrate</string>
+    <string name="reject_title">Denegado</string>
+    <string name="done_subtext">tendremos en cuenta esta información para posteriores búsquedas</string>
+    <string name="done_text">Has añadido un articulo a favoritos.</string>
+    <string name="done_title">Realizado</string>
+    <string name="warn_subtext">no podremos por tanto avisarte del estado de tus favoritos</string>
+    <string name="default_notification_channel_id"> FCMpordefecto </string>
+    <string name="warn_text">Has desactivado Ofertea en segundo plano.</string>
+    <string name="warn_title">Aviso</string>
+
+    <!-- error String -->
+    <string name="error_incorrect_password">contraseña incorrecta</string>
+    <string name="error_inexistent_user">el usuario no existe</string>
+    <string name="error_bad_login_register">surgió un problema en la autenticación, prueba de nuevo</string>
+    <string name="error_incorrect_call">llamada https erronea</string>
+    <string name="error_server_error">disculpa el servidor no está disponible en este momento</string>
+    <string name="success">añadido favorito</string>
+    <string name="successUpload">tu foto se relaciona a este item aparecera en la parte superior</string>
+
+    <!-- use terns-->
+    <string name="ternsTit">Términos de uso</string>
+    <string name="ternsDesc">Aceptar los términos de la App (foolink)?</string>
+    <string name="yes">Aceptar</string>
+    <string name="no">Rechazar</string>
+    <string name="neutral">¿quién soy?</string>
+
+    <!-- explain login / register-->
+    <string name="lTit">Entrar / Registrarse</string>
+    <string name="lMess">Esta función te permitirá registrarte o entrar en la App, los usuarios registrados recibirán notificaciones de productos relacionados</string>
+
+    <!-- explain photo-->
+    <string name="pTit">Subir foto</string>
+    <string name="pMess">Esta función permite añadir una foto pública sobre la oferta</string>
+
+    <!-- explain favourite-->
+    <string name="cTit">Favorito</string>
+    <string name="cMess">Esta función permite reseñar una oferta favorita en internet</string>
+
+    <!-- explain products-->
+    <string name="prTit">ver catálogo</string>
+    <string name="prMess">Esta función te permite visualizar todas las ofertas del sistema</string>
+
+    <!-- explain preferences-->
+    <string name="prefTit">ver preferencias</string>
+    <string name="prefMess">Esta función te permitirá configurar la App</string>
+
+    <!-- wellcome-->
+    <string name="wellcome">Bienvenido</string>
+
+
 </resources>

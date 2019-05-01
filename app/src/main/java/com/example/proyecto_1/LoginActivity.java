@@ -4,25 +4,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONObject;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import javax.net.ssl.HttpsURLConnection;
+
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity  {
-
-    /**
-     *  Authentication BD subsystem
-     */
-    private myBD bd = new myBD(this,"BD",null,1);
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -70,6 +74,15 @@ public class LoginActivity extends AppCompatActivity  {
             public void onClick(View view) {
                 // try to login
                 attemptLogin();
+            }
+        });
+        // ensemble the lngic to return button
+        FloatingActionButton fab11 = (FloatingActionButton) findViewById(R.id.fab11);
+        fab11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // return to main view
+                returnMain();
             }
         });
     }
@@ -120,7 +133,7 @@ public class LoginActivity extends AppCompatActivity  {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            mAuthTask = new UserLoginTask(email, password, bd);
+            mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -171,20 +184,19 @@ public class LoginActivity extends AppCompatActivity  {
         // values to intern control login attempt
         private final String mEmail;
         private final String mPassword;
-        private myBD bd;
+        private int mCod;
         public Boolean status ;
 
         /**
          * Constructor for asynchronous login task
          * @param email
          * @param password
-         * @param labd
          */
-        public UserLoginTask(String email, String password, myBD labd) {
+        public UserLoginTask(String email, String password) {
             // set up control values
             mEmail = email;
             mPassword = password;
-            bd = labd;
+            mCod=-1;
         }
 
         /**
@@ -194,14 +206,48 @@ public class LoginActivity extends AppCompatActivity  {
          */
         @Override
         protected Boolean doInBackground(Void... params) {
-            if(bd.logUsr(mEmail,mPassword) == -1){
-                //if user doesnt exist
-                bd.addUsr(mEmail,mPassword);
-            }else  if(bd.logUsr(mEmail,mPassword) == -2){
-                // if user exists but password dont match
+            // attempt login / register
+            HttpsURLConnection urlConnection= com.example.proyecto_1.GeneradorConexionesSeguras.getInstance().crearConexionSegura(getApplicationContext(),"https://134.209.235.115/eandres011/WEB/gestorUsuarios.php");
+            try {
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestProperty("Content-Type","application/json");
+                JSONObject parametrosJSON = new JSONObject();
+                parametrosJSON.put("register", true);
+                parametrosJSON.put("email", mEmail);
+                parametrosJSON.put("password", mPassword);
+                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                out.print(parametrosJSON.toString());
+                out.close();
+                int statusCode = urlConnection.getResponseCode();
+                if (statusCode == 200){
+                    BufferedInputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader (new InputStreamReader(inputStream, "UTF-8"));
+                    String line, result="";
+                    while ((line = bufferedReader.readLine()) != null){
+                        result += line;
+                    }
+                    inputStream.close();
+                    JSONObject json =new JSONObject(result);
+                    String status = (String) json.get("estado");
+                    int cod = (int)json.get("code");
+                    if(status == "ok"){
+
+                        return true;
+                    }else{
+                       mCod = cod;
+                       return false;
+                    }
+                }else{
+                    // error al realizar petición
+                    Log.w("error", String.valueOf(statusCode));
+                    mCod = 3;
+                    return false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
-            return true;
         }
 
         /**
@@ -211,7 +257,8 @@ public class LoginActivity extends AppCompatActivity  {
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            if (success) {
+            if (mCod == 200) {
+                Log.w("login", "success");
                 //if success
                 // update user preferences with the loged user
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -222,9 +269,20 @@ public class LoginActivity extends AppCompatActivity  {
                 returnMain();
                 finish();
             } else {
-
-                // if something failed
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                Log.w("login", "not succed");
+                Log.w("login", String.valueOf(mCod));
+                // if something failed check what
+                if(mCod == 0){
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                }else if(mCod == 1){
+                    mPasswordView.setError(getString(R.string.error_inexistent_user));
+                }else if(mCod == 2){
+                    mPasswordView.setError(getString(R.string.error_bad_login_register));
+                }else if(mCod == 3){
+                    mPasswordView.setError(getString(R.string.error_incorrect_call));
+                }else if(mCod == 4) {
+                    mPasswordView.setError(getString(R.string.error_server_error));
+                }
                 mPasswordView.requestFocus();
             }
         }

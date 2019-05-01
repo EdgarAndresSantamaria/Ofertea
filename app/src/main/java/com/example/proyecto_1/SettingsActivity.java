@@ -33,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         // retrieve the GUI components to manage preferences
         color = (Switch) findViewById(R.id.switch1);
         language = (Switch) findViewById(R.id.switch2);
-        // ensemble the lgic to return butto
+        // ensemble the lngic to return button
         FloatingActionButton fab7 = (FloatingActionButton) findViewById(R.id.fab7);
         fab7.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         // return to main view
         startMain();
+        finish();
     }
 
     /**
