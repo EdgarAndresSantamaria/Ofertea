@@ -44,7 +44,7 @@
         $fields = json_encode ( $fields );
         // stablish request heeaders
         $headers = array (
-                'Authorization: key=' . "AAAA9VFwh7I:APA91bEBnY_IhKifMh5gxiRdh7RBr0Rf1rbUgREp0LhYJhdDC_ucDuE3ObyLDzkyC2uqesKdXQMIlbFHJwkedGpRnmmikhlliiMZHmFnfHUloJ_w1aio13XgEM6Lwflbo71h7FSiTgQo",
+                'Authorization: key=' . "AAAA9VFwh7I:APA91bEBnY_IhKifMh5gxiRdh7RBr0Rf1r ...",
                 'Content-Type: application/json'
         );
         // init CURL
