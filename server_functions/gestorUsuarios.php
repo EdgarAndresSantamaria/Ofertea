@@ -30,7 +30,7 @@
         // save hash funct output for pass
         $password=hash('sha512',$password);
         // stablish DB connection
-        $conectar =mysqli_connect('localhost', "Xeandres011", "2g1Y9h2yDS", "Xeandres011_das");
+        $conectar =mysqli_connect('localhost', "Xeandres011", "2g1Y ....", "Xeandres011_das");
         // check status
         if(!$conectar){
             // return error log
@@ -84,7 +84,7 @@
     // this function tries to login the user specified by email and password
     function login($email, $password){
         // stablish DB connection
-        $conectar =mysqli_connect('localhost', "Xeandres011", "2g1Y9h2yDS", "Xeandres011_das");
+        $conectar =mysqli_connect('localhost', "Xeandres011", "2g1 ....", "Xeandres011_das");
         // check errors
         if(!$conectar){
             // log errors
