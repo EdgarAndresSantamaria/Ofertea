@@ -11,6 +11,8 @@
     <string name="item3">Selected products</string>
     <string name="item4">Profile</string>
     <string name="item5">Preferences</string>
+    <string name="item6">Map</string>
+    <string name="item7">gallery</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password </string>
     <string name="action_sign_in">Login or register</string>
@@ -124,7 +126,7 @@
     <string name="error_incorrect_call">wrong https call</string>
     <string name="error_server_error">sorry our server is out</string>
     <string name="success">added favourite</string>
-    <string name="successUpload">your photo was added to topic it ll be shown on top</string>
+    <string name="successUpload">your photo was added to our server</string>
 
     <!-- use terns-->
     <string name="ternsTit">Terms of use</string>
@@ -147,7 +149,7 @@
 
     <!-- explain products-->
     <string name="prTit">Products</string>
-    <string name="prMess">This function shows all avaliable offers in the App</string>
+    <string name="prMess">This function enters into gallery where you can share your experience</string>
 
     <!-- explain preferences-->
     <string name="prefTit">Preferences</string>
@@ -155,6 +157,11 @@
 
     <!-- wellcome-->
     <string name="wellcome">Welcome</string>
+    <string name="appwidget_text">Favourites counter</string>
+    <string name="add_widget">Add widget</string>
 
+    <!-- gallery activity-->
+    <string name="but">add photo</string>
+    <string name="mes">fotos handled on server</string>
 
 </resources>

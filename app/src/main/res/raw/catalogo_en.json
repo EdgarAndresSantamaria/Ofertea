@@ -2,26 +2,36 @@
    {  
       "compañia":"Carrefour",
       "oferta":"3x2",
-      "descripcion":"3x2 in whole meat products"
+      "descripcion":"3x2 in whole meat products",
+      "lat": 43,
+      "lon": -2
    },
    {  
       "compañia":"PcActual",
       "oferta":"10% discount",
-      "descripcion":"discount of 10% in periferials"
+      "descripcion":"discount of 10% in periferials",
+      "lat": 43,
+      "lon": -5
    },
    {  
       "compañia":"Amazon",
       "oferta":"50% discount",
-      "descripcion":"our shoes on half price"
+      "descripcion":"our shoes on half price",
+      "lat": 43,
+      "lon": -3
    },
    {  
       "compañia":"Felizonia",
       "oferta":"100%",
-      "descripcion":"we pay you each product"
+      "descripcion":"we pay you each product",
+      "lat": 44,
+      "lon": -2
    },
    {  
       "compañia":"BBK",
       "oferta":"robbery",
-      "descripcion":"we rob you all the money in exchange you earn a prize"
+      "descripcion":"we rob you all the money in exchange you earn a prize",
+      "lat": 44,
+      "lon": -1
    }
 ]

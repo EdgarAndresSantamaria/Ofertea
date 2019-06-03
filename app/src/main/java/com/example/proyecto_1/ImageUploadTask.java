@@ -28,13 +28,11 @@ public class ImageUploadTask extends AsyncTask<Void, Void, Boolean> {
      * @param imagen
      * @param app
      * @param url
-     * @param token
      */
-    public ImageUploadTask(String imagen, Context app, String url ,String token) {
+    public ImageUploadTask(String imagen, Context app, String url) {
         // set up control values
         mImagen = imagen;
         mContext = app;
-        mToken = token;
         mUrl = url;
         mCod = -1;
     }

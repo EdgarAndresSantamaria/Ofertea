@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Helper class for providing sample content for user interfaces
@@ -24,7 +26,7 @@ public class DummyContent {
     /**
      * Static list of items
      */
-    public static  List ITEMS;
+    public static  List<Item> ITEMS;
     /**
      * A map of sample  items, by ID.
      */
@@ -53,10 +55,10 @@ public class DummyContent {
             Item act = (Item) it.next();
             ITEMS.add(act);
             addItem(act);
-
         }
 
     }
+
 
     /**
      * Method to add an item to the static list
@@ -132,6 +134,8 @@ public class DummyContent {
         String company = null;
         String offer = null;
         String description = null;
+        int lat = 0;
+        int lon = 0;
 
         // read next object
         reader.beginObject();
@@ -148,6 +152,12 @@ public class DummyContent {
                 case "descripcion":
                     description = reader.nextString();
                     break;
+                case "lat":
+                    lat = reader.nextInt();
+                    break;
+                case "lon":
+                    lon = reader.nextInt();
+                    break;
                 default:
                     reader.skipValue();
                     break;
@@ -156,7 +166,7 @@ public class DummyContent {
         // close object
         reader.endObject();
         // return the offer item
-        return new Item(company, offer, description);
+        return new Item(company, offer, description,lat,lon);
     }
 
     /**
@@ -167,6 +177,8 @@ public class DummyContent {
         public  String company;
         public  String offer;
         public  String description;
+        public int lat;
+        public int lon;
 
         /**
          * Constructor for dummy items
@@ -174,11 +186,13 @@ public class DummyContent {
          * @param content
          * @param details
          */
-        public Item(String id, String content, String details) {
+        public Item(String id, String content, String details, int latitude, int longitude) {
             // initialize content values
             company = id;
             offer = content;
             description = details;
+            lat = latitude;
+            lon = longitude;
         }
 
         /**

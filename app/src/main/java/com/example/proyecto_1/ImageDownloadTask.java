@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import javax.net.ssl.HttpsURLConnection;
 
 /**
@@ -14,6 +16,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Boolean> {
 
     // values to intern control download attempt
     private Bitmap mImage;
+    private String imageUrl;
     private Context mContext;
     public Boolean status;
 
@@ -22,10 +25,11 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Boolean> {
      *
      * @param app
      */
-    public ImageDownloadTask(Context app) {
+    public ImageDownloadTask(Context app, String url) {
         // set up control values
         mImage = null;
         mContext = app;
+        imageUrl =url;
     }
 
     /**
@@ -44,11 +48,13 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Boolean> {
      */
     @Override
     protected Boolean doInBackground(Void... params) {
+        Log.v("llamando a imagen","https://134.209.235.115/eandres011/WEB/" + imageUrl);
             try {
                 // attempt download ( default image )
-                HttpsURLConnection urlConnection = com.example.proyecto_1.GeneradorConexionesSeguras.getInstance().crearConexionSegura(mContext, "https://134.209.235.115/eandres011/WEB/'imageTmpWed%20May%2001%2019:45:19%20GMT+02:00%202019'.jpg");
+                HttpsURLConnection urlConnection = com.example.proyecto_1.GeneradorConexionesSeguras.getInstance().crearConexionSegura(mContext, "https://134.209.235.115/eandres011/WEB/'"+imageUrl+"'.jpg");
                 int responseCode = urlConnection.getResponseCode();
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    Log.v("success","imagen descargada");
                      // generate bitmap from image
                      mImage = BitmapFactory.decodeStream(urlConnection.getInputStream());
                     return true;

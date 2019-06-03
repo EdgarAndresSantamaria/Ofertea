@@ -11,6 +11,8 @@
     <string name="item3">carro compra</string>
     <string name="item4">perfil</string>
     <string name="item5">preferencias</string>
+    <string name="item6">mapa</string>
+    <string name="item7">galeria</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Contraseña </string>
     <string name="action_sign_in">Entrar o registrarse</string>
@@ -124,7 +126,7 @@
     <string name="error_incorrect_call">llamada https erronea</string>
     <string name="error_server_error">disculpa el servidor no está disponible en este momento</string>
     <string name="success">añadido favorito</string>
-    <string name="successUpload">tu foto se relaciona a este item aparecera en la parte superior</string>
+    <string name="successUpload">tu foto fué añadida a nuestros servidores con éxito</string>
 
     <!-- use terns-->
     <string name="ternsTit">Términos de uso</string>
@@ -139,7 +141,7 @@
 
     <!-- explain photo-->
     <string name="pTit">Subir foto</string>
-    <string name="pMess">Esta función permite añadir una foto pública sobre la oferta</string>
+    <string name="pMess">Esta función permite acceder a la galeria de fotos donde compartir con nosotros tu experiencia</string>
 
     <!-- explain favourite-->
     <string name="cTit">Favorito</string>
@@ -155,6 +157,10 @@
 
     <!-- wellcome-->
     <string name="wellcome">Bienvenido</string>
-
+    <string name="appwidget_text">Contador de favoritos</string>
+    <string name="add_widget">Añadir widget</string>
+    <!-- gallery activity-->
+    <string name="but">añadir foto</string>
+    <string name="mes">Fotos albergadas en servidor</string>
 
 </resources>

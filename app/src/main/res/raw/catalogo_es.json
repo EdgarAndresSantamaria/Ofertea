@@ -2,26 +2,37 @@
    {  
       "compañia":"Carrefour",
       "oferta":"3x2",
-      "descripcion":"3x2 en todos los productos de carniceria"
+      "descripcion":"3x2 en todos los productos de carniceria",
+      "lat": 43,
+      "lon": -2
+
    },
    {  
       "compañia":"PcActual",
       "oferta":"10% descuento",
-      "descripcion":"descuento del 10% en periféricos"
+      "descripcion":"descuento del 10% en periféricos",
+      "lat": 43,
+      "lon": -5
    },
    {  
       "compañia":"Amazon",
       "oferta":"50% descuento",
-      "descripcion":"todas nuestras zapatillas a mitad de precio"
+      "descripcion":"todas nuestras zapatillas a mitad de precio",
+      "lat": 43,
+      "lon": -3
    },
    {  
       "compañia":"Felizonia",
       "oferta":"100%",
-      "descripcion":"te pagamos por nuestros productos"
+      "descripcion":"te pagamos por nuestros productos",
+      "lat": 44,
+      "lon": -2
    },
    {  
       "compañia":"BBK",
       "oferta":"robo",
-      "descripcion":"te robamos todo lo que nos permitas pero tendrás un trofeo honorífico"
+      "descripcion":"te robamos todo lo que nos permitas pero tendrás un trofeo honorífico",
+      "lat": 44,
+      "lon": -1
    }
 ]

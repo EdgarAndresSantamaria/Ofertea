@@ -11,6 +11,8 @@
     <string name="item3">carro compra</string>
     <string name="item4">perfil</string>
     <string name="item5">preferencias</string>
+    <string name="item6">mapa</string>
+    <string name="item7">galeria</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Contraseña </string>
     <string name="action_sign_in">Entrar o registrarse</string>
@@ -124,7 +126,7 @@
     <string name="error_incorrect_call">wrong https call</string>
     <string name="error_server_error">sorry our server is out</string>
     <string name="success">added favourite</string>
-    <string name="successUpload">your photo was added to topic it ll be shown on top</string>
+    <string name="successUpload">your photo was added to our server</string>
 
     <!-- use terns-->
     <string name="ternsTit">Terms of use</string>
@@ -139,7 +141,7 @@
 
     <!-- explain photo-->
     <string name="pTit">Upload photo</string>
-    <string name="pMess">This function uploads a photo related to a offer</string>
+    <string name="pMess">This function enters into gallery where you can share your experience</string>
 
     <!-- explain favourite-->
     <string name="cTit">Favourite</string>
@@ -155,5 +157,13 @@
 
     <!-- wellcome-->
     <string name="wellcome">Welcome</string>
+
+    <string name="google_maps_key">AIzaSyAiO8J2kSFI2p5wQH1f2y2xlVdCmPs1bn8</string>
+    <string name="appwidget_text">Favourites counter</string>
+    <string name="add_widget">Add widget</string>
+
+    <!-- gallery activity-->
+    <string name="but">añadir foto</string>
+    <string name="mes">Fotos albergadas en servidor</string>
 
 </resources>

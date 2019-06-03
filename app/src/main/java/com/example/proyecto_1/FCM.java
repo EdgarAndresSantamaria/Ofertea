@@ -50,6 +50,15 @@ public class FCM extends FirebaseMessagingService {
             if(!user.equals("invitado")) {
                 // user not identified
                 showNotification(getString(R.string.done_text), getString(R.string.done_subtext), getString(R.string.done_title));
+                prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                int favs = prefs.getInt("favourites", 0);
+                favs ++;
+                prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                // stablish a writer
+                SharedPreferences.Editor editor = prefs.edit();
+                // redefine style flag
+                editor.putInt("favourites",favs);
+                editor.commit();
             }else{
                 // user identified
                 showNotification(getString(R.string.reject_text), getString(R.string.reject_subtext), getString(R.string.reject_title));

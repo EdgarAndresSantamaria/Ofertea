@@ -71,8 +71,8 @@ public class ItemDetailActivity extends AppCompatActivity {
         Boolean style =  prefs.getBoolean("estilo",false);
 
         // recoger elementos remotos
-        ImageDownloadTask mImageDlTask = new ImageDownloadTask(getApplicationContext());
-        mImageDlTask.execute((Void) null);
+        //ImageDownloadTask mImageDlTask = new ImageDownloadTask(getApplicationContext());
+        //mImageDlTask.execute((Void) null);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -85,18 +85,6 @@ public class ItemDetailActivity extends AppCompatActivity {
             AppBarLayout bar = (AppBarLayout) findViewById(R.id.app_bar);
             bar.setBackgroundColor(Color.parseColor("#FF33b5e5"));
         }
-
-        // get camera button
-        FloatingActionButton fab12 =  findViewById(R.id.fab12);
-        // configure behaviur of camera button
-        fab12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent elIntentGal = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(elIntentGal, 100);
-            }
-        });
 
         // set the action to fab5 icon (favourite)
         FloatingActionButton fab5 = (FloatingActionButton) findViewById(R.id.fab5);
@@ -154,6 +142,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+/**
 
         // esperar a la carga asincrona
         while(mImageDlTask.getmImage() == null){
@@ -168,8 +157,9 @@ public class ItemDetailActivity extends AppCompatActivity {
         //setting image position
         imageView.setLayoutParams(new AppBarLayout.LayoutParams(100,
                 100));
-        layout.addView(imageView);
 
+        layout.addView(imageView);
+**/
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -194,41 +184,6 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-            try {
-                Uri imagenSeleccionada = data.getData();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imagenSeleccionada);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] fototransformada = stream.toByteArray();
-                String fotoen64 = Base64.encodeToString(fototransformada, Base64.DEFAULT);
-                Log.w("url", "imageTmp" + new Date().toString());
-                Log.w("token", elToken);
-                mImageTask = new ImageUploadTask(fotoen64, getApplicationContext(), "imageTmp" + new Date().toString(),elToken);
-                mImageTask.execute((Void) null);
-                int mCod = mImageTask.getmCod();
-                // check result
-                if(mCod == -1){
-                    showBasicMsg(getString(R.string.successUpload));
-                }else if(mCod == 0){
-                    showBasicMsg(getString(R.string.error_incorrect_password));
-                }else if(mCod == 1){
-                    showBasicMsg(getString(R.string.error_inexistent_user));
-                }else if(mCod == 2){
-                    showBasicMsg(getString(R.string.error_bad_login_register));
-                }else if(mCod == 3){
-                    showBasicMsg(getString(R.string.error_incorrect_call));
-                }else if(mCod == 4) {
-                    showBasicMsg(getString(R.string.error_server_error));
-                }
-
-            }catch(Exception e){
-                Log.w("excepcion", e.toString());
-            }
-        }
-    }
     /**
      * This method manages the function of back button
      */
